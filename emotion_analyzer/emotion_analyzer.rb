@@ -1,5 +1,10 @@
 class EmotionAnalyzer
+  require 'open-uri'
   require 'json'
+  require 'redis'
+  require 'cjk_helper'
+
+  require_relative 'tokenizer'
   
   CATEGORY_MAP = {
     'PA' => '乐',
@@ -25,27 +30,89 @@ class EmotionAnalyzer
     'PC' => '惊',
   }
 
+  TYPE = {
+    '0' => '中性',
+    '1' => '正面',
+    '2' => '负面',
+  }
 
-  def self.analyze(word:)
-    JSON.parse(File.read("/Users/huangmh/Codes/nextNewsTools/emotion_analyzer/emotion_database.json"))[word]
+  def self.on(word:nil, text:nil, file:nil, url:nil)
+    if word
+      analyze_on_word(word)
+    elsif text
+      analyze_on_text(text)
+    elsif file
+      analyze_on_file(file)
+    elsif url
+     analyze_on_url(url)
+    end
   end
-
-  def self.analyze_brief(word:)
-    ret = JSON.parse(File.read("/Users/huangmh/Codes/nextNewsTools/emotion_analyzer/emotion_database.json"))[word]
-    if ret
-      if ret['emotion_polarity'].to_i == 2
-        factor = -1
-      else
-        factor = ret['emotion_polarity'].to_i
-      end
-
-      {
-        "word" => word,
-        "category" => CATEGORY_MAP[ret['emotion_category']],
-        "category_" => ret['emotion_category'],
-        "polarity" => ret['emotion_polarity'],
-        "level" => ret['emotion_level'].to_i * factor
+ 
+  private
+  def self.analyze_on_word(word)
+    redis = Redis.new(:port => '4568')
+    ret_hash = to_hash(string: redis.get(word))
+    if ret_hash
+      { 
+        :category => CATEGORY_MAP[ret_hash["emotion_category"]],
+        :level => ret_hash["emotion_level"],
+        :type =>  TYPE[ret_hash["emotion_polarity"]],
+        :word => word,
       }
     end
   end
+
+  def self.analyze_on_text(text)
+    words_emotion = []
+    Tokenizer.tokenize(text:chinese_of(text)).each do |word|
+      words_emotion << analyze_on_word(word)
+    end
+    final_judge(words_emotion.compact)
+  end
+
+  def self.analyze_on_file(file)
+    analyze_on_text(File.read(file))
+  end
+
+  def self.analyze_on_url(url)
+    analyze_on_text(File.read(open(url)))
+  end
+
+  def self.final_judge(emotion_words)
+    emotion_category = {}
+    emotion_words.each do |word|
+      puts word
+      if emotion_category[word[:category]]
+        emotion_category[word[:category]] += word[:level].to_i
+      else
+        emotion_category[word[:category]] = word[:level].to_i
+      end
+    end
+    emotion_categorys = []
+    emotion_category.each_pair do |k, v|
+      tmp = {}
+      tmp["key"] = k
+      tmp["value"] = v
+      emotion_categorys <<  tmp
+    end
+    quick_sort(emotion_categorys)
+  end
+
+  def self.quick_sort(elements)
+    return elements if elements.length < 2
+    left, right = elements[1..-1].partition do |ele|
+      ele["value"] >= elements.first["value"]
+    end
+    quick_sort(left) + [elements.first] + quick_sort(right)
+  end
+
+  def self.to_hash(string:)
+    JSON.parse(string.gsub("'",'"').gsub('=>',':')) if string
+  end 
+
+  def self.chinese_of(text)
+    CJKHelper.get_cjk(text)
+  end
 end
+
+puts EmotionAnalyzer.on(url: "https://ruby-china.org/topics/24012")

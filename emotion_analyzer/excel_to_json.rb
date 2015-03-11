@@ -2,9 +2,12 @@
 
 require 'creek'
 require 'json'
+require 'redis'
+require 'json'
 
 creek = Creek::Book.new "emotion_data.xlsx"
 sheet= creek.sheets[0]
+redis = Redis.new(:port => 4568)
 
 emotion_database = {}
 sheet.rows.each do |row|
@@ -37,9 +40,11 @@ sheet.rows.each do |row|
     end
   end
     emotion_database[word['text']] =  word
+    redis.set(word['text'], word)
 end
 
-File.open("emotion_database.json", "w") do |file|
-  file.puts emotion_database.to_json
-end
+
+#File.open("emotion_database.json", "w") do |file|
+#  file.puts emotion_database.to_json
+#end
 
