@@ -2,7 +2,6 @@ class EmotionAnalyzer
   require 'open-uri'
   require 'json'
   require 'redis'
-  require 'cjk_helper'
 
   CATEGORY_MAP = {
     'PA' => '乐',
