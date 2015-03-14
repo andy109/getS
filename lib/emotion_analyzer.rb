@@ -2,6 +2,7 @@ class EmotionAnalyzer
   require 'open-uri'
   require 'json'
   require 'redis'
+  require 'cjk_helper'
 
   CATEGORY_MAP = {
     'PA' => '乐',
@@ -72,7 +73,8 @@ class EmotionAnalyzer
   end
 
   def self.analyze_on_url(url)
-    analyze_on_text(File.read(open(url)))
+    text = Readability.content_of_article(url:url)
+    analyze_on_text(text)
   end
 
   def self.final_judge(emotion_words)

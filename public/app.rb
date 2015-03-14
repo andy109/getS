@@ -1,6 +1,11 @@
 require 'sinatra'
 require 'json'
 
+Dir[File.expand_path('../../lib', __FILE__) + "/*.rb"].each do |lib|
+  require lib if lib !~ /test/
+end
+require_relative  '../../cjk_helper/lib/cjk_helper'
+
 # ++
 # routers
 # ++
@@ -9,16 +14,18 @@ get '/' do
 end
 
 post '/text' do
-  'you are analyzing a text'
+ text = JSON.parse(request.body.read)['text']
+ EmotionAnalyzer.on(text: text).to_json
 end
 
-
 post '/file' do
-  'you are upload a file'
+  text = request.body.string.strip
+  EmotionAnalyzer.on(text: text).to_json
 end
 
 post '/url' do
-  'you are giving a url'
+  url = JSON.parse(request.body.read)['url']
+  EmotionAnalyzer.on(url: url).to_json
 end
 
 # ++

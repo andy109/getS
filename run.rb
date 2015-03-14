@@ -1,8 +1,11 @@
 #!/usr/bin/env ruby
 
-require_relative 'rss_parser/rss_parser'
 require_relative 'tokenizer/tokenizer'
 require_relative 'emotion_analyzer/emotion_analyzer'
+
+puts EmotionAnalyzer.on(url: 'https://ruby-china.org/topics/24012')
+
+__END__
 
 def calculte_text_emotion(text:)
   begin
