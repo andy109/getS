@@ -4,7 +4,6 @@ require 'json'
 Dir[File.expand_path('../../lib', __FILE__) + "/*.rb"].each do |lib|
   require lib if lib !~ /test/
 end
-require_relative  '../../cjk_helper/lib/cjk_helper'
 
 # ++
 # routers
