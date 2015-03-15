@@ -1,12 +1,17 @@
-.container-4{
+div.figure-container {
+  text-align: center;
+  padding-top: 50px;
+}
+
+div.input-container{
   overflow: hidden;
-//  width: 300px;
   vertical-align: middle;
   white-space: nowrap;
   text-align: center;
+  margin-top: 50px;
 }
 
-.container-4 button#submit {
+.input-container button#submit {
   height: 50px;
   width: 100px;
   font-size: 10pt;
@@ -15,7 +20,7 @@
   background-color: lightgreen;
 }
 
-.container-4 input#search{
+.input-container input#search{
   width: 300px;
   height: 50px;
   //background: #2b303b;
@@ -46,3 +51,15 @@
    color: #65737e;  
 }
 
+/* process bar*/
+.bar-container {
+  text-align: center;
+  padding-top: 50px;
+}
+
+div#bar {
+  background-color: #46BFBD;
+  height: 5px;
+  margin: auto;
+  width: 0px;
+}

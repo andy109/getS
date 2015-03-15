@@ -1,15 +1,19 @@
 <head>
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <script  type="text/javascript" src="/js/main.js"> </script>
+  <script type="text/javascript" src="/js/main.js"></script>
+  <script src="/js/Chart.js"></script>
+  <script src="/js/randomColor.js"></script>
 </head>
-<div class="box">
-  <div class="container-4">
+<body>
+  <div class="input-container">
     <input type="search" id="search" placeholder="Feed me a URL ..." />
     <button class="icon" id="submit"> Submit </button>
   </div>
-  <div>
-    <p id="result"> </p>
+  <div class="bar-container">
+    <div id="bar"></div>
   </div>
-</div>
-
+  <div class="figure-container">
+    <canvas id="myChart" width="400" height="400"></canvas>
+  </div>
+</body>

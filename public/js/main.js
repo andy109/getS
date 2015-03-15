@@ -1,7 +1,23 @@
 window.onload = function() {
     document.getElementById("submit").onclick = function() { 
         makeRequest(document.getElementById("search").value); 
+        startProgressBar();
     };
+
+}
+
+function startProgressBar() {
+    var node = document.getElementById("bar");
+    node.style.visibility = "visible";
+    setInterval(function () {
+    //    var node = document.getElementById("bar");
+        node.style.width = Math.random() * 100 + "px";
+    }, 500);
+}
+
+function stopProgressBaar() {
+    var node = document.getElementById("bar");
+    node.style.visibility = "hidden";
 }
 
 function makeRequest(url) {
@@ -32,7 +48,28 @@ function makeRequest(url) {
 function alertContents() {
     if (httpRequest.readyState === 4) {
         if (httpRequest.status === 200) {
-            document.getElementById("result").innerHTML = httpRequest.responseText;
+        var pieData = []; 
+        var data = JSON.parse(httpRequest.responseText);
+        var colors = randomColor({
+           count: 10,
+           hue: 'green'
+        });
+        for (var i = 0; i < data.length; i++) {
+            var tmp = {};
+            tmp.value = parseInt(data[i].value);
+            tmp.label = data[i].key;
+            tmp.color = colors[i];
+            pieData.push(tmp);
+        }
+
+        var pieOptions = {
+            segmentShowStroke : true,
+            animateScale : true,
+        };
+
+        var countries= document.getElementById("myChart").getContext("2d");
+        new Chart(countries).Pie(pieData, pieOptions);
+        stopProgressBaar();
         } else {
             alert('There was a problem with the request.');
         }
