@@ -9,7 +9,8 @@ end
 # routers
 # ++
 get '/' do
-  'hello, welcome'
+  #'hello, welcome'
+  erb :index
 end
 
 post '/text' do
