@@ -21,7 +21,7 @@ function stopProgressBaar() {
 }
 
 function makeRequest(url) {
-    var API_URL = "http://localhost:9292/url";
+    var API_URL = "http://ai.minghe.me/url";
     if (window.XMLHttpRequest) { // Mozilla, Safari, ...
       httpRequest = new XMLHttpRequest();
     } else if (window.ActiveXObject) { // IE
