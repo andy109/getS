@@ -1,4 +1,4 @@
-### gSA
+### getS
 
 A sentiment analysis tool for Chinese article.
 
